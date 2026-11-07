@@ -1,0 +1,23 @@
+# Core
+numpy==2.2.6
+pandas==2.2.3
+pyarrow==22.0.0
+
+# Modelling
+scikit-learn==1.7.2
+statsmodels==0.14.6
+lightgbm==4.6.0
+shap==0.50.0
+
+# Visualisation
+matplotlib==3.10.0
+seaborn==0.13.2
+
+# Notebooks
+jupyter
+
+# Dev tools
+ruff
+pytest==8.4.2
+nbstripout
+pre-commit
