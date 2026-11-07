@@ -1,41 +1,61 @@
-# What Makes a Claim Expensive?
+<p align="center">
+  <img src="assets/banner.svg" alt="What Makes a Claim Expensive? Claim severity modeling with Gamma GLMs and gradient boosting on French motor insurance data (freMTPL2)" width="100%">
+</p>
 
-**Claim severity modeling with GLMs and gradient boosting**
+<p align="center">
+  <img src="https://img.shields.io/badge/status-in%20progress-d29922" alt="Status: in progress">
+  <img src="https://img.shields.io/badge/started-Nov%206%2C%202026-0969da" alt="Started November 6, 2026">
+  <img src="https://img.shields.io/badge/python-3.12-3776AB?logo=python&logoColor=white" alt="Python 3.12">
+  <img src="https://img.shields.io/badge/models-Gamma%20GLM%20%C2%B7%20LightGBM-6e7781" alt="Models: Gamma GLM and LightGBM">
+  <img src="https://img.shields.io/badge/license-MIT-6e7781" alt="License: MIT">
+</p>
 
-> **Project question:** What makes a claim expensive, and can we predict its cost at the time the policy is written?
+<p align="center"><b>Timeline:</b> November 6, 2026 to present · <b>By</b> <a href="https://nafisatibrahim.com/">Nafisat Ibrahim</a></p>
 
-The main goal is to identify the drivers of claim cost and to test how predictable severity is from underwriting information alone. Comparing a mean baseline, a Gamma GLM and a gradient-boosted model (LightGBM) is how we test it: if added model complexity cannot beat the baseline, the cost is mostly not predictable from these features. The project also covers calibration, explainability, and a drift monitoring plan. Built on French motor insurance data (freMTPL2).
+> **What makes a claim expensive, and can we predict its cost at the time the policy is written?**
 
-## Context
+## Problem
 
-Insurers price policies on the **pure premium**: expected claim frequency × expected claim severity. This project focuses on **severity**: *given that a claim happens, how much will it cost?*
+Insurers price on **frequency × severity**. This project models severity: *once a claim happens, what will it cost?*
 
-**Constraint: only information known when the policy is written.** The model uses underwriting features only (driver age, vehicle, bonus-malus, region, density). It has no claim-level details such as injury type, damage extent or accident circumstances, which are what actually drive the cost of an individual claim.
-Severity data is positive, right-skewed, and heavy-tailed. **Gamma GLMs with a log link** are widely used in insurance pricing for this kind of target, because they handle skewed positive amounts and produce explainable multiplicative relativities. LightGBM (Gamma objective) serves as a flexible challenger to check whether non-linearities and interactions add signal the GLM misses.
+- **Target:** average cost per claim, per policy (weighted by number of claims)
+- **Features:** underwriting info only (driver age, vehicle, bonus-malus, region, density). No injury or damage details.
+- **Approach:** mean baseline → Gamma GLM → LightGBM. If complexity can't beat the baseline, severity isn't predictable from these features.
+- **Why a Gamma GLM:** claim costs are positive and heavily skewed; Gamma GLMs handle that and give explainable relativities, which is why they're widely used in pricing.
 
-**Outputs:**
-- **Cost drivers:** GLM relativities and SHAP values answer *what makes a claim expensive*.
-- **Predictability:** technical metrics (Gamma deviance, MAE, Gini) and business metrics (portfolio balance, decile lift) answer *can we predict it*.
+## Success metrics
+
+| Question | Metric | What "good" looks like |
+|---|---|---|
+| Is it accurate? | Gamma deviance *(primary)*, MAE | Lower than the baseline |
+| Does it rank risks? | Gini | Above 0 (baseline scores 0) |
+| Is the book priced right? | Balance ratio (predicted ÷ actual cost) | ≈ 1.00 |
+| Does it separate cheap from expensive? | Decile lift | Top decile clearly above bottom |
+| What drives cost? | GLM relativities, SHAP values | Consistent, explainable drivers |
 
 ## Data
 
 **freMTPL2** (French Motor Third-Party Liability): ~678k policies and ~26.6k claims, available on OpenML:
 
-| Table | OpenML id (to verify on load) | Content |
-|---|---|---|
-| `freMTPL2freq` | 41214 | One row per policy: exposure, claim count, driver/vehicle/region features |
-| `freMTPL2sev` | 41215 | One row per claim: policy id, claim amount |
+| Table | OpenML id | Rows × columns | Content |
+|---|---|---|---|
+| `freMTPL2freq` | 41214 | 678,013 × 12 | One row per policy: exposure, claim count, driver/vehicle/region features |
+| `freMTPL2sev` | 41215 | 26,639 × 2 | One row per claim: policy id, claim amount |
 
 Raw data lives in `data/raw/` and is not committed.
 
 ## Plan & checklist
 
+<p align="center">
+  <img src="assets/roadmap.svg" alt="Project roadmap: Frame (done), Data (in progress), Model (to do), Learn (to do)" width="100%">
+</p>
+
 Detailed plan, metric definitions, and decision log: **[plan.md](plan.md)**
 
-- [ ] 1. Problem formulation
-- [ ] 2. Success metrics (technical + business)
-- [ ] 3. Data acquisition & join
-- [ ] 4. Data profiling & quality checks
+- [x] 1. Problem formulation
+- [x] 2. Success metrics (technical + business)
+- [ ] 3. Data acquisition & join *(acquisition done; join next)*
+- [ ] 4. Data profiling & quality checks *(in progress)*
 - [ ] 5. Exploratory data analysis
 - [ ] 6. Train/test split
 - [ ] 7. Preprocessing & feature engineering
@@ -48,6 +68,7 @@ Detailed plan, metric definitions, and decision log: **[plan.md](plan.md)**
 ## Project structure
 
 ```
+├── assets/             # README images (banner, roadmap, icons)
 ├── data/
 │   ├── raw/            # original downloads (git-ignored)
 │   └── processed/      # cleaned / modelling tables (git-ignored)
@@ -89,3 +110,15 @@ _To be filled in._
 ### Answer to the project question
 
 _What makes a claim expensive, and how much of it is predictable at underwriting?_
+
+## Author
+
+**Nafisat Ibrahim**
+
+<p>
+  <a href="https://github.com/Nafisatibrahim" title="GitHub"><img src="assets/icons/github.svg" alt="GitHub" width="28" height="28"></a>
+  &nbsp;&nbsp;
+  <a href="https://www.linkedin.com/in/nafisatibrahim/" title="LinkedIn"><img src="assets/icons/linkedin.svg" alt="LinkedIn" width="28" height="28"></a>
+  &nbsp;&nbsp;
+  <a href="https://nafisatibrahim.com/" title="Website"><img src="assets/icons/website.svg" alt="Website" width="28" height="28"></a>
+</p>
